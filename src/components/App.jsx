@@ -1,7 +1,6 @@
 import React from "react";
 import moviesData from "../moviesData";
-
-console.log(moviesData);
+import MovieIten from "./MovieItem";
 
 class App extends React.Component {
   constructor() {
@@ -11,11 +10,23 @@ class App extends React.Component {
       movies: moviesData
     };
   }
+
+  removeMovie = movie => {
+    const updateMovies = this.state.movies.filter(function (item) {
+      return item.id !== movie.id;
+    });
+    console.log(updateMovies);
+    //this.state.movies = updateMovies;
+    this.setState({
+      movies: updateMovies
+    });
+  }
+
   render() {
-    return <div>{this.state.movies.map(function(movie) {
-    return <p>{movie.title}</p>
+    return <div>{this.state.movies.map(movie => {
+      return <MovieIten key={movie.id} movie={movie} removeMovie={this.removeMovie} />;
     })}</div>;
-    }
+  }
 }
 
 /* function App() {
