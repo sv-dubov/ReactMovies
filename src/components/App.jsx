@@ -1,5 +1,4 @@
 import React from "react";
-//import { moviesData } from "../moviesData";
 import MovieItem from "./MovieItem";
 import { API_URL, API_KEY_3 } from "../utils/api";
 import MovieTabs from "./MovieTabs";
@@ -19,6 +18,16 @@ class App extends React.Component {
   }
 
   componentDidMount() {
+    this.getMovies();
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    if (prevState.sort_by !== this.state.sort_by) {
+      this.getMovies();
+    }
+  }
+
+  getMovies = () => {
     fetch(`${API_URL}/discover/movie?api_key=${API_KEY_3}&sort_by=${this.state.sort_by}`).then((response) => {
       return response.json()
     }).then((data) => {
@@ -72,9 +81,9 @@ class App extends React.Component {
           <div className="col-9">
             <div className="row mb-4">
               <div className="col-12">
-                <MovieTabs 
-                sort_by={this.state.sort_by}
-                updateSortBy={this.updateSortBy} />
+                <MovieTabs
+                  sort_by={this.state.sort_by}
+                  updateSortBy={this.updateSortBy} />
               </div>
             </div>
             <div className="row">
