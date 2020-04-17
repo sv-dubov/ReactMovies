@@ -2,6 +2,7 @@ import React from "react";
 import MovieItem from "./MovieItem";
 import { API_URL, API_KEY_3 } from "../utils/api";
 import MovieTabs from "./MovieTabs";
+import MoviePagin from "./MoviePagin";
 
 // UI = fn(state, props)
 // App = new React.Component()
@@ -13,7 +14,9 @@ class App extends React.Component {
     this.state = {
       movies: [],
       moviesWillWatch: [],
-      sort_by: "popularity.desc"
+      sort_by: "popularity.desc",
+      totalPages: 0,
+      currentPage: 1,
     };
   }
 
@@ -41,7 +44,6 @@ class App extends React.Component {
     console.log(movie.id);
     const updateMovies = this.state.movies.filter(item => item.id !== movie.id);
     console.log(updateMovies);
-
     // this.state.movies = updateMovies;
     this.setState({
       movies: updateMovies
@@ -71,6 +73,50 @@ class App extends React.Component {
     this.setState({
       sort_by: value
     });
+  };
+
+  onNextButtonClick = () => {
+    if (this.state.currentPage === this.state.totalPages) {
+      return false;
+    }
+
+    fetch(
+      `${API_URL}/discover/movie?api_key=${API_KEY_3}&sort_by=${
+      this.state.sort_by
+      }&page=${this.state.currentPage + 1}`,
+    )
+      .then(response => {
+        return response.json();
+      })
+      .then(data => {
+        this.setState({
+          movies: data.results,
+          totalPages: data.total_pages,
+          currentPage: data.page,
+        });
+      });
+  };
+
+  onPrevButtonClick = () => {
+    if (this.state.currentPage === 1) {
+      return false;
+    }
+
+    fetch(
+      `${API_URL}/discover/movie?api_key=${API_KEY_3}&sort_by=${
+      this.state.sort_by
+      }&page=${this.state.currentPage - 1}`,
+    )
+      .then(response => {
+        return response.json();
+      })
+      .then(data => {
+        this.setState({
+          movies: data.results,
+          totalPages: data.total_pages,
+          currentPage: data.page,
+        });
+      });
   };
 
   render() {
@@ -113,6 +159,16 @@ class App extends React.Component {
                 </li>
               ))}
             </ul>
+          </div>
+        </div>
+        <div className="row  mb-4 mt-4">
+          <div className="col-12">
+            <MoviePagin
+              onNextButtonClick={this.onNextButtonClick}
+              onPrevButtonClick={this.onPrevButtonClick}
+              totalPages={this.state.totalPages}
+              currentPage={this.state.currentPage}
+            />
           </div>
         </div>
       </div>
